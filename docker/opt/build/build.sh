@@ -26,18 +26,18 @@ POST_INSTALL_SCRIPT="/app/assets/scripts/post-install.sh"
 
 export INSTALL_PATH="${INSTALL_PATH}"
 
-rm -rf "$OUTPUT_DIR/darwin"
+rm -rf "${OUTPUT_DIR}/darwin"
 
-mkdir -p "$OUTPUT_DIR/darwin/flat/Resources/en.lproj"
-mkdir -p "$OUTPUT_DIR/darwin/flat/base.pkg"
-mkdir -p "$OUTPUT_DIR/darwin/root${INSTALL_DIR}"
-mkdir -p "$OUTPUT_DIR/darwin/scripts"
+mkdir -p "${OUTPUT_DIR}/darwin/flat/Resources/en.lproj"
+mkdir -p "${OUTPUT_DIR}/darwin/flat/base.pkg"
+mkdir -p "${OUTPUT_DIR}/darwin/root${INSTALL_DIR}"
+mkdir -p "${OUTPUT_DIR}/darwin/scripts"
 
-cp -R "${BUILD_BIN_DIR}"/* "$OUTPUT_DIR/darwin/root${INSTALL_DIR}"
-[[ -f "${POST_INSTALL_SCRIPT}" ]] && cp "${POST_INSTALL_SCRIPT}" $OUTPUT_DIR/darwin/scripts/
-cp /app/assets/resources/* $OUTPUT_DIR/darwin/flat/Resources/en.lproj
+cp -R "${BUILD_BIN_DIR}"/* "${OUTPUT_DIR}/darwin/root${INSTALL_DIR}"
+[[ -f "${POST_INSTALL_SCRIPT}" ]] && cp "${POST_INSTALL_SCRIPT}" ${OUTPUT_DIR}/darwin/scripts/
+cp /app/assets/resources/* ${OUTPUT_DIR}/darwin/flat/Resources/en.lproj
 
-chmod +x $OUTPUT_DIR/darwin/scripts/*
+chmod +x ${OUTPUT_DIR}/darwin/scripts/*
 
 NUM_FILES=$(find ${OUTPUT_DIR}/darwin/root | wc -l)
 INSTALL_KB_SIZE=$(du -k -s ${OUTPUT_DIR}/darwin/root | awk '{print $1}')
@@ -89,6 +89,6 @@ PKG_LOCATION="${OUTPUT_DIR}/${APP_NAME}.pkg"
 ( cd ${OUTPUT_DIR}/darwin/root && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${OUTPUT_DIR}/darwin/flat/base.pkg/Payload
 ( cd ${OUTPUT_DIR}/darwin/scripts && find . | cpio -o --format odc --owner 0:80 | gzip -c ) > ${OUTPUT_DIR}/darwin/flat/base.pkg/Scripts
 mkbom -u 0 -g 80 ${OUTPUT_DIR}/darwin/root ${OUTPUT_DIR}/darwin/flat/base.pkg/Bom
-( cd ${OUTPUT_DIR}/darwin/flat/ && xar --compression none -cf "${PKG_LOCATION}" * )
+( cd ${OUTPUT_DIR}/darwin/flat/ && xar --compression none -cf "${PKG_LOCATION}" ./* )
 rm -rf ${OUTPUT_DIR}/darwin
 echo "osx package has been built: ${PKG_LOCATION}"
