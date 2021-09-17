@@ -13,7 +13,11 @@ set -euo pipefail
 APP_NAME="${1:-}"
 APP_VERSION="${2:-}"
 INSTALL_PATH="${3:-}"
-WORK_DIR="${4:-/app}"
+
+BUILD_BIN_DIR="${4:-/app/bin}"
+RESOURCES_DIR="${5:-/app/resources}"
+OUTPUT_DIR="${6:-/app/dist}"
+POST_INSTALL_SCRIPT="${7:-/scripts/post-install.sh}"
 
 [[ -z "${APP_NAME}" ]] && { echo "please provide app name as arg1"; exit 1; }
 [[ -z "${APP_VERSION}" ]] && { echo "please provide app version as arg2"; exit 1; }
@@ -22,11 +26,6 @@ WORK_DIR="${4:-/app}"
 INSTALL_DIR="$(dirname "${INSTALL_PATH}")"
 INSTALL_BIN="$(basename "${INSTALL_PATH}")"
 
-BUILD_BIN_DIR="${WORK_DIR}/bin"
-OUTPUT_DIR="${WORK_DIR}/dist"
-RESOURCES_DIR="${WORK_DIR}/resources"
-POST_INSTALL_SCRIPT="${WORK_DIR}/scripts/post-install.sh"
-
 rm -rf "${OUTPUT_DIR}/darwin"
 
 mkdir -p "${OUTPUT_DIR}/darwin/flat/Resources/en.lproj"
@@ -34,7 +33,8 @@ mkdir -p "${OUTPUT_DIR}/darwin/flat/base.pkg"
 mkdir -p "${OUTPUT_DIR}/darwin/root${INSTALL_DIR}"
 mkdir -p "${OUTPUT_DIR}/darwin/scripts"
 
-cp -R "${BUILD_BIN_DIR}"/* "${OUTPUT_DIR}/darwin/root${INSTALL_DIR}"
+[[ -d "${BUILD_BIN_DIR}" ]] && cp -R "${BUILD_BIN_DIR}"/* "${OUTPUT_DIR}/darwin/root${INSTALL_DIR}"
+[[ -f "${BUILD_BIN_DIR}" ]] && cp "${BUILD_BIN_DIR}" "${OUTPUT_DIR}/darwin/root${INSTALL_PATH}"
 [[ -f "${POST_INSTALL_SCRIPT}" ]] && cp "${POST_INSTALL_SCRIPT}" ${OUTPUT_DIR}/darwin/scripts/
 cp "${RESOURCES_DIR}"/* ${OUTPUT_DIR}/darwin/flat/Resources/en.lproj
 
@@ -56,7 +56,7 @@ cat <<EOF > ${OUTPUT_DIR}/darwin/flat/base.pkg/PackageInfo
 <pkg-info overwrite-permissions="true" relocatable="false" identifier="${APP_NAME}" postinstall-action="none" format-version="2" generator-version="InstallCmds-502 (14B25)" auth="root">
  <payload numberOfFiles="${NUM_FILES}" installKBytes="${INSTALL_KB_SIZE}"/>
  <bundle-version>
- <bundle id="${APP_NAME}" CFBundleIdentifier="${APP_NAME}" path="${INSTALL_DIR}/${INSTALL_BIN}" CFBundleVersion="${APP_VERSION}"/>
+ <bundle id="${APP_NAME}" CFBundleIdentifier="${APP_NAME}" path="${INSTALL_PATH}" CFBundleVersion="${APP_VERSION}"/>
  </bundle-version>
  <update-bundle/>
  <atomic-update-bundle/>
