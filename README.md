@@ -1,9 +1,9 @@
 # mac-pkg-builder
 
 ## folder structure
-* /app/assets/bin should contains the binary of the application
-* /app/assets/resources should contains logo-dark.png, logo-light.png and welcome.html
-* /app/assets/scripts can optionally contains a post-install.sh shell script which is triggered after installation routine
+* /app/bin should contains the binary of the application
+* /app/resources should contains logo-dark.png, logo-light.png and welcome.html
+* /app/scripts can optionally contains a post-install.sh shell script which is triggered after installation routine
 
 ## arguments
 * app name as arg1

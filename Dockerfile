@@ -33,4 +33,6 @@ RUN cp -R /opt/build/bomutils-0.2/build/bin/* /usr/local/bin/
 
 COPY ./docker/ /
 
+WORKDIR /app
+
 ENTRYPOINT ["/opt/build/build.sh"]

@@ -4,9 +4,9 @@ set -euo pipefail
 
 [[ "${DEBUG:-}" == "1" ]] && set -x
 
-# /app/assets/bin should contains the binary of the application
-# /app/assets/resources should contains logo-dark.png, logo-light.png and welcome.html
-# /app/assets/scripts can optionally contains a post-install.sh shell script which is triggered after installation routine
+# /app/bin should contains the binary of the application
+# /app/resources should contains logo-dark.png, logo-light.png and welcome.html
+# /app/scripts can optionally contains a post-install.sh shell script which is triggered after installation routine
 # INSTALL_PATH is the target application where the APP will be installed through the pkg installer
 # the built package will be saved into /app/dist as pkg file
 
@@ -20,9 +20,9 @@ INSTALL_PATH="${3:-}"
 
 INSTALL_DIR="$(dirname "${INSTALL_PATH}")"
 INSTALL_BIN="$(basename "${INSTALL_PATH}")"
-BUILD_BIN_DIR="/app/assets/bin"
+BUILD_BIN_DIR="/app/bin"
 OUTPUT_DIR="/app/dist"
-POST_INSTALL_SCRIPT="/app/assets/scripts/post-install.sh"
+POST_INSTALL_SCRIPT="/app/scripts/post-install.sh"
 
 export INSTALL_PATH="${INSTALL_PATH}"
 
@@ -35,7 +35,7 @@ mkdir -p "${OUTPUT_DIR}/darwin/scripts"
 
 cp -R "${BUILD_BIN_DIR}"/* "${OUTPUT_DIR}/darwin/root${INSTALL_DIR}"
 [[ -f "${POST_INSTALL_SCRIPT}" ]] && cp "${POST_INSTALL_SCRIPT}" ${OUTPUT_DIR}/darwin/scripts/
-cp /app/assets/resources/* ${OUTPUT_DIR}/darwin/flat/Resources/en.lproj
+cp /app/resources/* ${OUTPUT_DIR}/darwin/flat/Resources/en.lproj
 
 chmod +x ${OUTPUT_DIR}/darwin/scripts/*
 
