@@ -13,6 +13,7 @@ set -euo pipefail
 APP_NAME="${1:-}"
 APP_VERSION="${2:-}"
 INSTALL_PATH="${3:-}"
+WORK_DIR="${4:-/app}"
 
 [[ -z "${APP_NAME}" ]] && { echo "please provide app name as arg1"; exit 1; }
 [[ -z "${APP_VERSION}" ]] && { echo "please provide app version as arg2"; exit 1; }
@@ -20,11 +21,11 @@ INSTALL_PATH="${3:-}"
 
 INSTALL_DIR="$(dirname "${INSTALL_PATH}")"
 INSTALL_BIN="$(basename "${INSTALL_PATH}")"
-BUILD_BIN_DIR="/app/bin"
-OUTPUT_DIR="/app/dist"
-POST_INSTALL_SCRIPT="/app/scripts/post-install.sh"
 
-export INSTALL_PATH="${INSTALL_PATH}"
+BUILD_BIN_DIR="${WORK_DIR}/bin"
+OUTPUT_DIR="${WORK_DIR}/dist"
+RESOURCES_DIR="${WORK_DIR}/resources"
+POST_INSTALL_SCRIPT="${WORK_DIR}/scripts/post-install.sh"
 
 rm -rf "${OUTPUT_DIR}/darwin"
 
@@ -35,7 +36,7 @@ mkdir -p "${OUTPUT_DIR}/darwin/scripts"
 
 cp -R "${BUILD_BIN_DIR}"/* "${OUTPUT_DIR}/darwin/root${INSTALL_DIR}"
 [[ -f "${POST_INSTALL_SCRIPT}" ]] && cp "${POST_INSTALL_SCRIPT}" ${OUTPUT_DIR}/darwin/scripts/
-cp /app/resources/* ${OUTPUT_DIR}/darwin/flat/Resources/en.lproj
+cp "${RESOURCES_DIR}"/* ${OUTPUT_DIR}/darwin/flat/Resources/en.lproj
 
 chmod +x ${OUTPUT_DIR}/darwin/scripts/*
 
