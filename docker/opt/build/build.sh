@@ -17,14 +17,13 @@ INSTALL_PATH="${3:-}"
 BUILD_BIN_DIR="${4:-/app/bin}"
 RESOURCES_DIR="${5:-/app/resources}"
 OUTPUT_DIR="${6:-/app/dist}"
-POST_INSTALL_SCRIPT="${7:-/scripts/post-install.sh}"
+POST_INSTALL_SCRIPT="${7:-/app/scripts/post-install.sh}"
 
 [[ -z "${APP_NAME}" ]] && { echo "please provide app name as arg1"; exit 1; }
 [[ -z "${APP_VERSION}" ]] && { echo "please provide app version as arg2"; exit 1; }
 [[ -z "${INSTALL_PATH}" ]] && { echo "please provide app install path as arg3"; exit 1; }
 
 INSTALL_DIR="$(dirname "${INSTALL_PATH}")"
-INSTALL_BIN="$(basename "${INSTALL_PATH}")"
 
 rm -rf "${OUTPUT_DIR}/darwin"
 
@@ -47,7 +46,7 @@ addScriptsIfAny=""
 [[ -f "${POST_INSTALL_SCRIPT}" ]] && \
 addScriptsIfAny=<<EOF
 <scripts>
-  <postinstall file="./$(basename ${POST_INSTALL_SCRIPT})"/>
+  <postinstall file="./$(basename ${POST_INSTALL_SCRIPT}) $INSTALL_PATH" args="$INSTALL_PATH" />
 </scripts>
 EOF
 
